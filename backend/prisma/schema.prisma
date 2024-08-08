@@ -1,0 +1,619 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model t_types {
+  id              String        @id @default(uuid())
+  parent          Int
+  name            String
+  type            String        @db.VarChar(3)
+  url             String        @unique
+  photo           String?
+  description     String?
+  title           String
+  metakeywords    String?
+  metadescription String?
+  sorting         Int?          @default(0)
+  tour_type       t_tour_type[]
+  t_tour          t_tour[]
+}
+
+model t_about {
+  id           String  @id @default(uuid())
+  name         String  @default("")
+  position     String  @default("")
+  employment   String  @default("")
+  body         String?
+  publick      Int     @default(0)
+  order_number Int
+  photo        String? @db.VarChar(255)
+}
+
+model t_banner {
+  id      String  @id @default(uuid())
+  file    String  @default("") @db.VarChar(14)
+  fileext String  @default("") @db.VarChar(5)
+  url     String  @default("") @db.VarChar(255)
+  header  String  @default("") @db.VarChar(255)
+  width   String  @default("") @db.VarChar(5)
+  height  String  @default("") @db.VarChar(5)
+  type    Int     @default(0)
+  cnt     Int     @default(0)
+  tcnt    Int     @default(0)
+  info    String?
+  email   String  @default("") @db.VarChar(40)
+  act     Int     @default(1)
+  cityid  String
+  city    t_city  @relation(fields: [cityid], references: [id], onDelete: Cascade)
+}
+
+model t_city {
+  id              String       @id @default(uuid())
+  country_id      String
+  country         t_country    @relation(fields: [country_id], references: [id], onDelete: Cascade)
+  name            String       @default("") @db.VarChar(30)
+  url             String       @unique @default("") @db.VarChar(255)
+  body            String?
+  map             String?
+  photo           String       @default("") @db.VarChar(200)
+  metakeywords    String       @default("") @db.VarChar(255)
+  metadescription String       @default("") @db.VarChar(255)
+  title           String       @default("") @db.VarChar(255)
+  banner          t_banner[]
+  tourcity        t_tourcity[]
+  t_hotel         t_hotel[]
+  t_place         t_place[]
+
+  @@index([country_id])
+}
+
+model t_country {
+  id              String           @id @default(uuid())
+  language_id     Int              @default(1)
+  name            String
+  url             String           @unique
+  description     String
+  title           String
+  metadescription String
+  metakeywords    String
+  photo           String
+  city            t_city[]
+  tour_country    t_tour_country[]
+  t_hotel         t_hotel[]
+  t_place         t_place[]
+}
+
+model t_cityphoto {
+  id        String @id @default(uuid())
+  header_ru String @default("") @db.VarChar(255)
+  url       String @default("") @db.VarChar(255)
+  foto      String @default("") @db.VarChar(200)
+  fotoext   String @default("") @db.VarChar(5)
+  type      Int    @default(1)
+  domain    String @default("www") @db.VarChar(20)
+  header_en String @default("") @db.VarChar(255)
+  cat       Int    @default(0)
+}
+
+model t_dayplace {
+  id      String @id @default(uuid())
+  tourid  Int
+  dayid   Int
+  placeid Int
+
+  @@unique([tourid, dayid, placeid])
+}
+
+model t_exchange {
+  id             String  @id @default(uuid())
+  title          String
+  name           String
+  symbol         String
+  exchange_rate  Float
+  primary_valuta Boolean @default(false)
+}
+
+model t_faq {
+  id          String        @id @default(uuid())
+  name        String
+  description String
+  archive     Int           @default(0)
+  tour_faqs   t_tour_faqs[]
+}
+
+model t_guide {
+  id       String  @id @default(uuid())
+  url      String  @default("") @db.VarChar(255)
+  name_ru  String  @default("") @db.VarChar(255)
+  name_en  String  @default("") @db.VarChar(255)
+  local_ru String  @default("") @db.VarChar(255)
+  local_en String  @default("") @db.VarChar(255)
+  lang_ru  String  @default("") @db.VarChar(255)
+  lang_en  String  @default("") @db.VarChar(255)
+  body_ru  String?
+  body_en  String?
+  foto     String  @default("0") @db.Char(14)
+  fotoext  String  @default("") @db.VarChar(5)
+  vote     Int     @default(0)
+  voters   Int     @default(0)
+  cert_ru  String?
+  cert_en  String?
+
+  @@unique([url])
+}
+
+model t_guideresponses {
+  id       String    @id @default(uuid())
+  guide    Int
+  cat      Int
+  type     String    @default("") @db.Char(20)
+  name     String    @default("") @db.VarChar(150)
+  city     String    @default("") @db.VarChar(50)
+  email    String    @default("") @db.VarChar(150)
+  dtime    DateTime?
+  response String?
+  answer   String?
+  active   Int       @default(0)
+  foto     String    @default("0") @db.Char(14)
+  fotoext  String    @default("") @db.VarChar(5)
+  ftext    String    @default("0") @db.Char(16)
+  fotoext2 String    @default("") @db.VarChar(5)
+}
+
+model t_hotel {
+  id              String          @id @default(uuid())
+  country_id      String
+  cityid          String
+  country         t_country       @relation(fields: [country_id], references: [id], onDelete: Cascade)
+  city            t_city          @relation(fields: [cityid], references: [id], onDelete: Cascade)
+  name            String          @default("") @db.VarChar(250)
+  url             String          @unique @default("") @db.VarChar(255)
+  title           String
+  metakeywords    String          @default("") @db.VarChar(255)
+  metadescription String          @default("") @db.VarChar(255)
+  rating          Int
+  address         String          @default("") @db.VarChar(250)
+  photo           String
+  booking_rating  Int
+  body            String?
+  map             String?
+  services        Json
+  service_text    String?
+  conditions      String?
+  publics         Int             @default(1)
+  hotel_photo     t_hotel_photo[]
+  hotel_rooms     t_hotel_rooms[]
+}
+
+model t_hotel_photo {
+  id      String  @id @default(uuid())
+  hotelid String
+  hotel   t_hotel @relation(fields: [hotelid], references: [id], onDelete: Cascade)
+  photo   String  @default("") @db.VarChar(200)
+  alt     String  @default("") @db.VarChar(255)
+}
+
+model t_hotel_rooms {
+  id        String  @id @default(uuid())
+  hotel     t_hotel @relation(fields: [hotelid], references: [id], onDelete: Cascade)
+  hotelid   String
+  name      String  @default("") @db.VarChar(250)
+  price     Int
+  sizem     Int
+  body      String?
+  breakfast Boolean @default(false)
+  lunch     Boolean @default(false)
+  dinner    Boolean @default(false)
+  p_person  Int     @default(0)
+}
+
+model t_hotel_room_photo {
+  id      String @id @default(uuid())
+  room_id Int
+  photo   String
+  alt     String @db.VarChar(60)
+}
+
+model t_hotel_services {
+  id   String @id @default(uuid())
+  name String
+  icon String
+}
+
+model t_news {
+  id              String      @id @default(uuid())
+  new_date        String?     @db.VarChar(255)
+  header          String      @default("") @db.VarChar(255)
+  body            String?
+  firsttext       String?
+  lang            String      @default("ru") @db.Char(2)
+  type_id         String
+  type            t_news_type @relation(fields: [type_id], references: [id], onDelete: Cascade)
+  view            Int         @default(0)
+  photo           String
+  foto            String      @db.VarChar(200)
+  fototext        String      @db.VarChar(5)
+  title           String      @default("") @db.VarChar(255)
+  metakeywords    String      @default("") @db.VarChar(255)
+  metadescription String      @default("") @db.VarChar(255)
+  url             String      @default("") @db.VarChar(255)
+  publick         Int         @default(0)
+  country         String      @default("Узбекистан") @db.VarChar(50)
+  tags            String?
+
+  @@unique([url])
+}
+
+model t_news_type {
+  id              String   @id @default(uuid())
+  name            String   @db.VarChar(255)
+  description     String
+  photo           String   @db.VarChar(255)
+  url             String   @unique @db.VarChar(255)
+  title           String   @db.VarChar(255)
+  metakeywords    String   @db.VarChar(255)
+  metadescription String   @db.VarChar(255)
+  news            t_news[]
+}
+
+model t_order_product {
+  id       String @id @default(uuid())
+  user_id  Int
+  order_id Int
+  tour_id  Int
+}
+
+model t_orders {
+  id               String   @id @default(uuid())
+  user_id          String
+  user             t_users  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  travellers_count Int
+  tour_date_start  DateTime @default(now())
+  tour_date_end    DateTime @default(now())
+  order_created    DateTime @default(now())
+  order_updated    DateTime @updatedAt
+  price            Float    @default(0)
+  deposit          Float    @default(0)
+  balance          Float    @default(0)
+  total_price      Float    @default(0)
+  total_paid_price Float    @default(0)
+  payment_type     String
+  tour_type        String
+  order_data       Int
+  order_status     Int
+  payment_status   Int
+  order_number     Int
+  payment_id       Int
+}
+
+model t_order_hotels {
+  id       String @id @default(uuid())
+  order_id Int
+  hotel_id Int
+}
+
+model t_oreder_services {
+  id            String @id @default(uuid())
+  user_id       Int
+  order_id      Int
+  service_name  String
+  service_price Float
+  service_count Int
+}
+
+model t_order_status {
+  id    String @id @default(uuid())
+  name  String
+  color String
+}
+
+model t_order_travellers {
+  id             String @id @default(uuid())
+  order_id       Int
+  user_id        Int
+  customer_name  String
+  customer_email String
+  customer_phone String
+  billing_adress String
+  country        String
+  city           String
+  postcode       String
+}
+
+model t_pages {
+  id              String  @id @default(uuid())
+  url             String? @unique
+  isdel           Int     @default(0)
+  metakeywords    String?
+  metadescription String?
+  title           String?
+  titlename       String  @default("")
+  description     String  @default("")
+}
+
+model t_payment_status {
+  id    String @id @default(uuid())
+  name  String
+  color String
+}
+
+model t_photo {
+  id         String @id @default(uuid())
+  photo_type String
+  photo      String
+  alt        String
+}
+
+model t_place {
+  id              String    @id @default(uuid())
+  country_id      String
+  country         t_country @relation(references: [id], fields: [country_id], onDelete: Cascade)
+  city            t_city    @relation(references: [id], fields: [cityid], onDelete: Cascade)
+  cityid          String
+  url             String    @default("")
+  name            String
+  body            String?
+  photo           String
+  foto            String    @default("")
+  fotoext         String    @default("")
+  metakeywords    String    @default("")
+  metadescription String    @default("")
+  publics         Int       @default(1)
+
+  @@unique([url])
+}
+
+model t_place_photo {
+  id       String @id @default(uuid())
+  place_id Int
+  photo    String
+  alt      String
+}
+
+model t_restaurant {
+  id              String  @id @default(uuid())
+  country_id      Int
+  cityid          Int     @default(0)
+  url             String  @default("")
+  name            String
+  body            String?
+  photo           String
+  metakeywords    String  @default("")
+  metadescription String  @default("")
+
+  @@unique([url])
+}
+
+model t_restaurant_photo {
+  id            String @id @default(uuid())
+  restaurant_id Int
+  url           String @default("")
+  photo         String
+  alt           String
+}
+
+model t_review {
+  id      String    @id @default(uuid())
+  user_id Int
+  name    String?   @default("")
+  city    String
+  dtime   DateTime?
+  review  String?
+  answer  String?
+  active  Int       @default(0)
+  rating  Int       @default(5)
+}
+
+model t_tags {
+  id   String @id @default(uuid())
+  name String
+  url  String
+}
+
+model t_team {
+  id        String        @id @default(uuid())
+  name      String
+  photo     String
+  tour_team t_tour_team[]
+}
+
+model t_tour {
+  id              String             @id @default(uuid())
+  type            t_types            @relation(fields: [type_id], references: [id], onDelete: Cascade)
+  type_id         String
+  main_title      String?
+  name            String?
+  name2           String?
+  price           Float?
+  oldprice        Float?
+  sales           String?
+  body            String?
+  map             String?
+  url             String             @unique
+  photo           String?
+  metakeywords    String?
+  metadescription String?
+  ftext           String?
+  ftext2          String?
+  intop           Int?               @default(0)
+  intop2          Int?               @default(0)
+  intop3          Int?               @default(0)
+  types           Json?
+  include         Json?
+  exclude         Json?
+  notes           Json?
+  paid_services   Json?
+  places          Json?
+  transport       Json?
+  country         Json?
+  city            Json?
+  travellers      String?
+  archive         Int?               @default(0)
+  solo_price      Float?             @default(0)
+  single_price    Float?
+  guaranted       Int?               @default(0)
+  new_type        String?            @default("i")
+  transfer_price  String?
+  tour_city       t_tourcity[]
+  tourtoday       t_tourtoday[]
+  tourphoto       t_tourphoto[]
+  tour_country    t_tour_country[]
+  tour_day_price  t_tour_day_price[]
+  tour_faqs       t_tour_faqs[]
+  tour_team       t_tour_team[]
+}
+
+model t_tourcity {
+  id     String @id @default(uuid())
+  tourid String
+  tour   t_tour @relation(fields: [tourid], references: [id], onDelete: Cascade)
+  city   t_city @relation(fields: [cityid], references: [id], onDelete: Cascade)
+  cityid String
+}
+
+model t_tourtoday {
+  id           String           @id @default(uuid())
+  tourid       String
+  tour         t_tour           @relation(fields: [tourid], references: [id], onDelete: Cascade)
+  name         String
+  body         String
+  breakfast    Int              @default(0)
+  lunch        Int              @default(0)
+  dinner       Int              @default(0)
+  hotels       Json?
+  hotel        Int
+  tourdayphoto t_tourdayphoto[]
+}
+
+model t_tourdayphoto {
+  id      String      @id @default(uuid())
+  day_id  String
+  tourday t_tourtoday @relation(fields: [day_id], references: [id])
+  photo   String
+  foto    String?     @default("")
+  fotoext String?     @default("")
+  alt     String
+}
+
+model t_tourphoto {
+  id     String  @id @default(uuid())
+  tourid String
+  tour   t_tour  @relation(fields: [tourid], references: [id], onDelete: Cascade)
+  photo  String?
+}
+
+model t_tour_meta {
+  id              String @id @default(uuid())
+  lang            String @db.Char(2)
+  title           String
+  metakeywords    String
+  metadescription String
+  url             String
+}
+
+model t_tour_country {
+  id         String    @id @default(uuid())
+  tour_id    String
+  tour       t_tour    @relation(fields: [tour_id], references: [id], onDelete: Cascade)
+  country_id String
+  country    t_country @relation(fields: [country_id], references: [id], onDelete: Cascade)
+}
+
+model t_tour_day_price {
+  id            String   @id @default(uuid())
+  tourid        String
+  tour          t_tour   @relation(fields: [tourid], references: [id], onDelete: Cascade)
+  date_start    DateTime
+  date_end      DateTime
+  double_price  Int
+  single_price  Int
+  transferprice Int
+}
+
+model t_tour_faqs {
+  id     String @id @default(uuid())
+  tourid String
+  tour   t_tour @relation(fields: [tourid], references: [id], onDelete: Cascade)
+  faqid  String
+  faq    t_faq  @relation(fields: [faqid], references: [id], onDelete: Cascade)
+}
+
+model t_tour_services {
+  id      String  @id @default(uuid())
+  type_id String?
+  title   String?
+  icon    String?
+  price   Int
+  archive Int     @default(0)
+}
+
+model t_tour_team {
+  id      String @id @default(uuid())
+  tour_id String
+  team_id String
+  tour    t_tour @relation(fields: [tour_id], references: [id], onDelete: Cascade)
+  team    t_team @relation(fields: [team_id], references: [id])
+}
+
+model t_tour_type {
+  id              String  @id @default(uuid())
+  type_id         String
+  types           t_types @relation(fields: [type_id], references: [id])
+  name            String
+  url             String?
+  photo_name      String
+  photo_ext       String
+  description     String?
+  metakeywords    String?
+  metadescription String?
+  parent          Int
+  type            String
+}
+
+model t_users {
+  id           String           @id @default(uuid())
+  login        String?          @unique
+  first_name   String?
+  last_name    String?
+  phone_number String?
+  password     String
+  email        String           @unique @db.VarChar(255)
+  role         Int              @default(2)
+  photo        String
+  user_address t_user_address[]
+  t_orders     t_orders[]
+}
+
+model t_users_role {
+  id        String @id @default(uuid())
+  name      String
+  type_name String @default("guest")
+}
+
+model t_user_address {
+  id      String  @id @default(uuid())
+  user_id String
+  user    t_users @relation(fields: [user_id], references: [id])
+  country String
+  city    String
+  address String
+  zipcode String
+}
+
+model t_video {
+  id        String @id @default(uuid())
+  header    String @default("") @db.VarChar(255)
+  code      String @default("")
+  header_en String @default("") @db.VarChar(255)
+}
