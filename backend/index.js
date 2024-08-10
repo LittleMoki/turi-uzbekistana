@@ -23,13 +23,13 @@ app.use(router)
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         fs.mkdir(
-            path.join(__dirname, '../frontend/uploads'),
+            path.join(__dirname, '../backend/uploads'),
             {recursive: true},
             err => {
                 if (err && err.code !== 'EEXIST') {
                     return cb(err)
                 }
-                cb(null, path.join(__dirname, '../frontend/uploads'))
+                cb(null, path.join(__dirname, '../backend/uploads'))
             }
         )
     },
@@ -43,7 +43,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
     const {oldPhotoName} = req.body; // Получаем имя старой фотографии
     // Путь к старой фотографии
     if (oldPhotoName) {
-        const oldFilePath = path.join('/home/ka4ok/work/turi-uzbekistana.ru/frontend', 'uploads', oldPhotoName);
+        const oldFilePath = path.join('/home/ka4ok/work/turi-uzbekistana.ru/backend', 'uploads', oldPhotoName);
 
         // Удаляем старую фотографию, если она существует
         if (fs.existsSync(oldFilePath)) {
@@ -62,7 +62,7 @@ app.post('/uploadmany', upload.array('files'), (req, res) => {
 
 app.get('/uploads/:filename', (req, res) => {
     const filename = req.params.filename;
-    const filepath = path.join(__dirname, '../frontend/uploads', filename);
+    const filepath = path.join(__dirname, '../backend/uploads', filename);
 
     fs.access(filepath, fs.constants.F_OK, err => {
         if (err) {
@@ -74,7 +74,7 @@ app.get('/uploads/:filename', (req, res) => {
 
 app.delete('/uploads/:filename', (req, res) => {
     const filename = req.params.filename;
-    const filepath = path.join(__dirname, '../frontend/uploads', filename);
+    const filepath = path.join(__dirname, '../backend/uploads', filename);
 
     fs.access(filepath, fs.constants.F_OK, err => {
         if (err) {
