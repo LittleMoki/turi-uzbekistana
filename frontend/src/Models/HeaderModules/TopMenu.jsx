@@ -8,13 +8,12 @@ import {useQuery} from "@tanstack/react-query";
 import {api} from "@/Api/api.js";
 
 export const TopMenu = () => {
-    const userId = Number(Cookies.get("userId"));
+    const userId = Cookies.get("userId");
 
     const {data} = useQuery({
         queryKey: ['userInfo'],
         queryFn: () => api.get(`/users/${userId}`),
-        select: data => data?.data?.data,
-        enabled: userId > 0
+        select: data => data?.data?.data
     });
     return (<div className='w-full py-3 bg-[#F0FDF4] relative z-0 lg:z-[21]'>
         <div className='px-3 mx-auto'>

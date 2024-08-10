@@ -32,7 +32,7 @@ export const RegisterUser = async (req, res) => {
             message: 'This email already exists'
         })
 
-        const hashedPassword = await hash(password, 7);
+        const hashedPassword = await hash(password, 10);
 
         const user = await prisma.t_users.create({
             data: {
@@ -78,5 +78,4 @@ export const getUserByToken = async (req, res) => {
     const {tokens} = req.body
 
     const token = jwt.verify(tokens, process.env.JWT_SECRET)
-    console.log(token)
 }
