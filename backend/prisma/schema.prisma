@@ -539,6 +539,8 @@ model t_tour_day_price {
   double_price  Int
   single_price  Int
   transferprice Int
+
+  @@unique([tourid])
 }
 
 model t_tour_faqs {

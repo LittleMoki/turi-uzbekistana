@@ -68,7 +68,7 @@ export default function Places() {
                                         <div className="w-full h-full overflow-hidden">
                                             <Image width={1000} height={1000}
                                                    className='w-full h-full aspect-[3/4] object-cover scale-100'
-                                                   src={`http://localhost:4000/uploads/${el.photo}`} alt={el.photo}/>
+                                                   src={`https://api.turi-uzbekistana.ru/uploads/${el.photo}`} alt={el.photo}/>
                                         </div>
                                         <h2
                                             style={{background: 'linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 0) 50%)'}}
@@ -81,7 +81,7 @@ export default function Places() {
                                         <div className="w-full h-full overflow-hidden">
                                             <Image width={1000} height={1000}
                                                    className='w-full h-full aspect-[3/4] object-cover scale-100'
-                                                   src={`http://localhost:4000/uploads/${el.photo}`} alt={el.photo}/>
+                                                   src={`https://api.turi-uzbekistana.ru/uploads/${el.photo}`} alt={el.photo}/>
                                         </div>
                                         <h2
                                             style={{background: 'linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 0) 50%)'}}

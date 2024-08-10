@@ -106,7 +106,7 @@ export const ShowAllTours = async (req, res) => {
         include: {
             type: true,
             tourtoday: true,
-            tour_city:true,
+            tour_city: true,
             tour_country: {
                 select: {
                     country: true
@@ -226,7 +226,7 @@ export const EditTour = async (req, res) => {
 
     const tourTypes = await prisma.t_types.findUnique({
         where: {
-            id: type_id
+            id: String(type_id)
         }
     })
 
@@ -329,31 +329,41 @@ export const EditTour = async (req, res) => {
             const datesInRange = eachDayOfInterval({start: dateStart, end: dateEnd});
 
             for (const date of datesInRange) {
-                await prisma.t_tour_day_price.upsert({
+                const existingTourDayPrice = await prisma.t_tour_day_price.findFirst({
                     where: {
-                        // Unique combination of tourid, date_start
-                        tourid_date_start_date_end: {
-                            tourid: id,
-                            date_start: date.toISOString(),
-                            date_end: addDays(dateStart, tourtoday.length).toISOString(),
-                        },
-                    },
-                    update: {
-                        double_price: tdp.double_price,
-                        single_price: tdp.single_price,
-                        transferprice: tdp.transferprice,
-                    },
-                    create: {
                         tourid: id,
                         date_start: date.toISOString(),
-                        date_end: addDays(date, tourtoday.length).toISOString(),
-                        double_price: tdp.double_price,
-                        single_price: tdp.single_price,
-                        transferprice: tdp.transferprice,
-                    },
+                    }
                 });
+
+                if (existingTourDayPrice) {
+                    // Если запись существует, обновляем её
+                    await prisma.t_tour_day_price.update({
+                        where: {
+                            id: existingTourDayPrice.id,
+                        },
+                        data: {
+                            double_price: tdp.double_price,
+                            single_price: tdp.single_price,
+                            transferprice: tdp.transferprice,
+                        }
+                    });
+                } else {
+                    // Если записи с такой датой нет, создаем новую
+                    await prisma.t_tour_day_price.create({
+                        data: {
+                            tourid: id,
+                            date_start: date.toISOString(),
+                            date_end: addDays(date, tourtoday.length).toISOString(),
+                            double_price: tdp.double_price,
+                            single_price: tdp.single_price,
+                            transferprice: tdp.transferprice,
+                        }
+                    });
+                }
             }
         }
+
 
         for (const c of city) {
             const existingCity = await prisma.t_tourcity.findFirst({

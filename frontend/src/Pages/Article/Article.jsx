@@ -60,7 +60,7 @@ const Article = ({
                         <div className='relative w-full max-h-[400px] rounded-2xl overflow-hidden'>
                             <Image
                                 className='w-full h-full object-cover brightness-50'
-                                src={`http://localhost:4000/uploads/${photo}`}
+                                src={`https://api.turi-uzbekistana.ru/uploads/${photo}`}
                                 alt={photo}
                                 width={1000}
                                 height={1000}

@@ -435,7 +435,7 @@ const AdminMainTour = () => {
     const tourDayPriceSchema = object({
         double_price: number().typeError('Must be number'),
         single_price: number().typeError('Must be number'),
-        transferPrice: number().typeError('Must be number'),
+        transferprice: number().typeError('Must be number'),
     })
 
     let defaultDate = {
@@ -461,7 +461,7 @@ const AdminMainTour = () => {
         date_end: formatDate(defaultDate.end),
         double_price: 0,
         single_price: 0,
-        transferPrice: 0,
+        transferprice: 0,
     })
 
     useEffect(() => {
@@ -726,11 +726,11 @@ const AdminMainTour = () => {
                                                                     label='Доплата за одноместное размещение:'
                                                                 />
                                                                 <CustomInput
-                                                                    error={tourDayPriceError.transferPrice}
-                                                                    value={tourDayPrice.transferPrice}
+                                                                    error={tourDayPriceError.transferprice}
+                                                                    value={tourDayPrice.transferprice}
                                                                     fn={e =>
                                                                         handleDayTourPrice(
-                                                                            'transferPrice',
+                                                                            'transferprice',
                                                                             e.target.value
                                                                         )
                                                                     }

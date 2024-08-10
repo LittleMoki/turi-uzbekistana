@@ -39,7 +39,7 @@ export const TourHotels = ({hotelId}) => {
                                         width={500}
                                         height={500}
                                         className="object-cover w-full h-full rounded-2xl"
-                                        src={`http://localhost:4000/uploads/${el?.photo}`}
+                                        src={`https://api.turi-uzbekistana.ru/uploads/${el?.photo}`}
                                         alt={el?.photo}
                                     />
                                 </div>

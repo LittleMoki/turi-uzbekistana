@@ -4,8 +4,6 @@ import {api} from "@/Api/api.js";
 
 
 export async function generateMetadata({ params }) {
-
-
     try {
 
         // Подключение к API для получения данных о стране

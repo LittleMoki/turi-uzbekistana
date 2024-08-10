@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/Api/api.js";
 import { useParams } from "next/navigation";
 import { Spinner } from "@nextui-org/react";
+import Image from "next/image";
 
 const Country = () => {
     const { country } = useParams();
@@ -78,7 +79,7 @@ const Country = () => {
                                     onMouseLeave={handleMouseLeave}
                                     key={el.id}
                                     className="relative overflow-hidden rounded-2xl cursor-pointer">
-                                    <img src={`http://localhost:4000/uploads/${el.photo}`} alt={el.name} />
+                                    <Image width={500} height={500} src={`https://api.turi-uzbekistana.ru/uploads/${el.photo}`} alt={el.name} />
                                     <div
                                         className={`absolute w-full h-full top-0 left-0 flex justify-center items-center text-white bg-black/40 duration-200 ${
                                             activeCard === el.id ? 'opacity-0' : 'opacity-1'
